@@ -134,13 +134,28 @@ public class HelloApplication extends Application {
                 public void checkInput() {
                     if(firstNameInput.getText().length() > 0 && lastNameInput.getText().length() > 0 && adressStationInput.getText().length() > 0 && nameStationInput.getText().length() > 0 && postalCodeInput.getText().length() > 0 && communeInput.getText().length() > 0 && communeInput.getText().length() > 0 && nbBornetteInput.getText().length() > 0) {
                         // All input are fill
+                        //Creating a JSONObject object
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("key", "value");
-                        FileWriter file = new FileWriter("E:/output.json");
-                        file.write(jsonObject.toString());
-                        file.close();
+                        //Inserting key-value pairs into the json object
+                        jsonObject.put("ID", "1");
+                        jsonObject.put("First_Name", "Shikhar");
+                        jsonObject.put("Last_Name", "Dhawan");
+                        jsonObject.put("Date_Of_Birth", "1981-12-05");
+                        jsonObject.put("Place_Of_Birth", "Delhi");
+                        jsonObject.put("Country", "India");
+                        try {
+                            FileWriter file = new FileWriter("./data-velov.json");
+                            file.write(jsonObject.toString());
+                            file.close();
 
-                        addSuggestError.setText("Send !");
+                            addSuggestError.setText("Send !");
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+
+                            addSuggestError.setText("Error !");
+                        }
+
                     } else {
                         // Nothing = Display Error
                         addSuggestError.setText("Error, all input are not fill...");
