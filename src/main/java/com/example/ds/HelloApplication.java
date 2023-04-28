@@ -54,7 +54,6 @@ public class HelloApplication extends Application {
             showDataContainer.setAlignment(Pos.CENTER);
             // Create Element
             Label showDataTitle = new Label("Show Data :");
-            showDataContainer.getChildren().addAll(showDataTitle);
 
             // Get All data
             JSONObject json = null;
@@ -165,7 +164,7 @@ public class HelloApplication extends Application {
             String adressData = obj.getString("adresse1");
             String nameData = obj.getString("nom");
 
-            Label newLabel = new Label("=> Adresse : " + adressData + "\n==> Nom : " + nameData + "\n==> Adresse : " + obj.get("adresse1") + "\n==> Nombre Bornettes : " + obj.get("nbbornettes"));
+            Label newLabel = new Label("=> Adresse : " + adressData + "\n==> Nom : " + nameData + "\n==> Arrondissment : " + obj.get("numdansarrondissement") + "\n==> Adresse : " + obj.get("adresse1") + "\n==> Nombre Bornettes : " + obj.get("nbbornettes"));
             containerStation.getChildren().add(newLabel);
         }
         containerDataAPI.getChildren().add(containerStation);
