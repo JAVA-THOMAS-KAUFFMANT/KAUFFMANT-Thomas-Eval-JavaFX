@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -55,7 +56,22 @@ public class HelloApplication extends Application {
             Label showDataTitle = new Label("Show Data :");
             showDataContainer.getChildren().addAll(showDataTitle);
 
-            Scene showDataScene = new Scene(showDataContainer, 400, 400);
+            // Get All data
+            JSONObject json = null;
+            try {
+                json = readJsonFromUrl("https://download.data.grandlyon.com/ws/grandlyon/pvo_patrimoine_voirie.pvostationvelov/all.json?maxfeatures=100&start=1");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            JSONArray dataAPI = json.getJSONArray("values");
+            showDataContainer.getChildren().addAll(showDataTitle, readAllData(dataAPI));
+
+            // Add all data in a ScrollPane
+            ScrollPane sp = new ScrollPane();
+            sp.setContent(showDataContainer);
+
+            Scene showDataScene = new Scene(sp, 400, 400);
             showDataStage = new Stage();
             showDataStage.setScene(showDataScene);
             showDataStage.show();
@@ -68,23 +84,13 @@ public class HelloApplication extends Application {
             downloadDataContainer.setAlignment(Pos.CENTER);
             // Create Element
             Label downloadDataTitle = new Label("Download Data :");
-            Label data = new Label();
-
-            JSONObject json = null;
-            try {
-                json = readJsonFromUrl("https://download.data.grandlyon.com/ws/grandlyon/pvo_patrimoine_voirie.pvostationvelov/all.json?maxfeatures=100&start=1");
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-
-            JSONArray dataAPI = json.getJSONArray("values");
-            downloadDataContainer.getChildren().addAll(downloadDataTitle, readAllData(dataAPI));
+            downloadDataContainer.getChildren().addAll(downloadDataTitle);
 
             Scene downloadDataScene = new Scene(downloadDataContainer, 400, 400);
-            downloadDataStage = new Stage();
-            downloadDataStage.setScene(downloadDataScene);
-            downloadDataStage.setTitle("Download");
-            downloadDataStage.show();
+            suggestDataStage = new Stage();
+            suggestDataStage.setScene(downloadDataScene);
+            suggestDataStage.setTitle("Download");
+            suggestDataStage.show();
         });
 
         // => EventListener SuggestDataButton
@@ -151,17 +157,15 @@ public class HelloApplication extends Application {
     }
 
     public static VBox readAllData(JSONArray dataAPI) {
-        VBox containerDataAPI = new VBox(10);
+        VBox containerDataAPI = new VBox();
         VBox containerStation = new VBox(20);
 
         for (int i = 0 ; i < dataAPI.length()-1; i++) {
             JSONObject obj = dataAPI.getJSONObject(i);
             String adressData = obj.getString("adresse1");
-            //String B = String.valueOf(obj.getInt("numdansarrondissement"));
             String nameData = obj.getString("nom");
-            // String D = obj.getString("nbbornettes");
 
-            Label newLabel = new Label("=> Adress : " + adressData + " / Nom : =>" + nameData);
+            Label newLabel = new Label("=> Adresse : " + adressData + "\n==> Nom : " + nameData + "\n==> Adresse : " + obj.get("adresse1") + "\n==> Nombre Bornettes : " + obj.get("nbbornettes"));
             containerStation.getChildren().add(newLabel);
         }
         containerDataAPI.getChildren().add(containerStation);
