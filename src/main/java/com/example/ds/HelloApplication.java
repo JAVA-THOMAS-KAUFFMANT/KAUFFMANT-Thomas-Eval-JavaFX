@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -78,18 +79,11 @@ public class HelloApplication extends Application {
 
         // => EventListener DownloadDataButton
         downloadData.setOnAction(e -> {
-            // Create container
-            VBox downloadDataContainer = new VBox();
-            downloadDataContainer.setAlignment(Pos.CENTER);
-            // Create Element
-            Label downloadDataTitle = new Label("Download Data :");
-            downloadDataContainer.getChildren().addAll(downloadDataTitle);
-
-            Scene downloadDataScene = new Scene(downloadDataContainer, 400, 400);
-            suggestDataStage = new Stage();
-            suggestDataStage.setScene(downloadDataScene);
-            suggestDataStage.setTitle("Download");
-            suggestDataStage.show();
+            try {
+                downloadFile();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         // => EventListener SuggestDataButton
@@ -169,6 +163,10 @@ public class HelloApplication extends Application {
         }
         containerDataAPI.getChildren().add(containerStation);
         return containerDataAPI;
+    }
+
+    public void downloadFile() throws IOException {
+        java.awt.Desktop.getDesktop().browse(URI.create("https://download.data.grandlyon.com/ws/grandlyon/pvo_patrimoine_voirie.pvostationvelov/all.json?maxfeatures=100&start=1"));
     }
 
     public static void main(String[] args) {
