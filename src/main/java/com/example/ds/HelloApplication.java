@@ -132,17 +132,18 @@ public class HelloApplication extends Application {
                 }
 
                 public void checkInput() {
-                    if(firstNameInput.getText().length() > 0 && lastNameInput.getText().length() > 0 && adressStationInput.getText().length() > 0 && nameStationInput.getText().length() > 0 && postalCodeInput.getText().length() > 0 && communeInput.getText().length() > 0 && communeInput.getText().length() > 0 && nbBornetteInput.getText().length() > 0) {
+                    if(firstNameInput.getText().length() > 0 && lastNameInput.getText().length() > 0 && adressStationInput.getText().length() > 0 && nameStationInput.getText().length() > 0 && postalCodeInput.getText().length() > 0 && communeInput.getText().length() > 0 && nbBornetteInput.getText().length() > 0) {
                         // All input are fill
+
                         //Creating a JSONObject object
                         JSONObject jsonObject = new JSONObject();
-                        //Inserting key-value pairs into the json object
-                        jsonObject.put("ID", "1");
-                        jsonObject.put("First_Name", "Shikhar");
-                        jsonObject.put("Last_Name", "Dhawan");
-                        jsonObject.put("Date_Of_Birth", "1981-12-05");
-                        jsonObject.put("Place_Of_Birth", "Delhi");
-                        jsonObject.put("Country", "India");
+                        jsonObject.put("firstname", firstNameInput.getText());
+                        jsonObject.put("lastname", lastNameInput.getText());
+                        jsonObject.put("adress", adressStationInput.getText());
+                        jsonObject.put("stationName", adressStationInput.getText());
+                        jsonObject.put("postalCode", postalCodeInput.getText());
+                        jsonObject.put("commune", communeInput.getText());
+                        jsonObject.put("nbBordnette", nbBornetteInput.getText());
                         try {
                             FileWriter file = new FileWriter("./data-velov.json");
                             file.write(jsonObject.toString());
@@ -150,9 +151,7 @@ public class HelloApplication extends Application {
 
                             addSuggestError.setText("Send !");
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
-
                             addSuggestError.setText("Error !");
                         }
 
