@@ -3,7 +3,6 @@ package com.example.ds;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -26,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 public class HelloApplication extends Application {
 
@@ -53,14 +52,23 @@ public class HelloApplication extends Application {
         downloadData = new Button("Télécharger le fichier");
         suggestData = new Button("Proposer une station");
         deleteSuggest = new Button("Supprimer une station");
+        deleteSuggest.setDisable(true);
 
         // => EventListener ShowDataButton
         showData.setOnAction(e -> {
             // Create container
-            VBox showDataContainer = new VBox();
+            VBox showDataContainer = new VBox(20);
+            VBox filterContainer = new VBox(4);
             showDataContainer.setAlignment(Pos.CENTER);
+            filterContainer.setAlignment(Pos.CENTER);
             // Create Element
             Label showDataTitle = new Label("Show Data :");
+
+            TextField arrondissementInput = new TextField();
+            arrondissementInput.setPromptText("Arondissment");
+            Button sendFilterButtonArrondissement = new Button("Filter");
+            Button allButtonArrondissement = new Button("Display all");
+            filterContainer.getChildren().addAll(arrondissementInput, sendFilterButtonArrondissement, allButtonArrondissement);
 
             // Get All data
             JSONObject json = null;
@@ -71,7 +79,20 @@ public class HelloApplication extends Application {
             }
 
             JSONArray dataAPI = json.getJSONArray("values");
-            showDataContainer.getChildren().addAll(showDataTitle, readAllData(dataAPI));
+
+            sendFilterButtonArrondissement.setOnAction(f -> {
+                if(arrondissementInput.getText().length() > 0 && arrondissementInput.getText() != null){
+                    showDataContainer.getChildren().remove(2);
+                    showDataContainer.getChildren().add(readAllDataFilterByArrondissment(dataAPI, arrondissementInput.getText()));
+                }
+            });
+
+            allButtonArrondissement.setOnAction(f -> {
+                showDataContainer.getChildren().remove(2);
+                showDataContainer.getChildren().add(readAllData(dataAPI));
+            });
+
+            showDataContainer.getChildren().addAll(showDataTitle, filterContainer, readAllData(dataAPI));
 
             // Add all data in a ScrollPane
             ScrollPane sp = new ScrollPane();
@@ -229,6 +250,24 @@ public class HelloApplication extends Application {
 
             Label newLabel = new Label("=> Adresse : " + adressData + "\n==> Nom : " + nameData + "\n==> Arrondissment : " + obj.get("numdansarrondissement") + "\n==> Adresse : " + obj.get("adresse1") + "\n==> Nombre Bornettes : " + obj.get("nbbornettes"));
             containerStation.getChildren().add(newLabel);
+        }
+        containerDataAPI.getChildren().add(containerStation);
+        return containerDataAPI;
+    }
+
+    public static VBox readAllDataFilterByArrondissment(JSONArray dataAPI, String arrondissement) {
+        VBox containerDataAPI = new VBox();
+        VBox containerStation = new VBox(20);
+
+        for (int i = 0 ; i < dataAPI.length()-1; i++) {
+            JSONObject obj = dataAPI.getJSONObject(i);
+            if (Objects.equals(arrondissement, obj.get("numdansarrondissement").toString())) {
+                String adressData = obj.getString("adresse1");
+                String nameData = obj.getString("nom");
+
+                Label newLabel = new Label("=> Adresse : " + adressData + "\n==> Nom : " + nameData + "\n==> Arrondissment : " + obj.get("numdansarrondissement") + "\n==> Adresse : " + obj.get("adresse1") + "\n==> Nombre Bornettes : " + obj.get("nbbornettes"));
+                containerStation.getChildren().add(newLabel);
+            }
         }
         containerDataAPI.getChildren().add(containerStation);
         return containerDataAPI;
