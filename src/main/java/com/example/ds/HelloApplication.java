@@ -1,20 +1,21 @@
 package com.example.ds;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -22,6 +23,9 @@ import java.nio.charset.Charset;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class HelloApplication extends Application {
 
@@ -34,6 +38,8 @@ public class HelloApplication extends Application {
     Button downloadData;
     Button suggestData;
     Button deleteSuggest;
+
+    Label addSuggestError = new Label();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -89,11 +95,60 @@ public class HelloApplication extends Application {
         // => EventListener SuggestDataButton
         suggestData.setOnAction(e -> {
             // Create container
-            VBox suggestDataContainer = new VBox();
+            VBox suggestDataContainer = new VBox(4);
             suggestDataContainer.setAlignment(Pos.CENTER);
+            suggestDataContainer.setPadding(new Insets(4));
             // Create Element
             Label suggestDataTitle = new Label("Suggest Data :");
-            suggestDataContainer.getChildren().addAll(suggestDataTitle);
+            // Create Username Input
+            TextField firstNameInput = new TextField();
+            firstNameInput.setPromptText("First name");
+
+            TextField lastNameInput = new TextField();
+            lastNameInput.setPromptText("Last name");
+
+            TextField adressStationInput = new TextField();
+            adressStationInput.setPromptText("Adress");
+
+            TextField nameStationInput = new TextField();
+            nameStationInput.setPromptText("Name station");
+
+            TextField postalCodeInput = new TextField();
+            postalCodeInput.setPromptText("Postal code");
+
+            TextField communeInput = new TextField();
+            communeInput.setPromptText("Commune");
+
+            TextField nbBornetteInput = new TextField();
+            nbBornetteInput.setPromptText("Nb bornette");
+
+            Button sendInput = new Button("Send");
+
+            // Button Send
+            sendInput.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    checkInput();
+                }
+
+                public void checkInput() {
+                    if(firstNameInput.getText().length() > 0 && lastNameInput.getText().length() > 0 && adressStationInput.getText().length() > 0 && nameStationInput.getText().length() > 0 && postalCodeInput.getText().length() > 0 && communeInput.getText().length() > 0 && communeInput.getText().length() > 0 && nbBornetteInput.getText().length() > 0) {
+                        // All input are fill
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("key", "value");
+                        FileWriter file = new FileWriter("E:/output.json");
+                        file.write(jsonObject.toString());
+                        file.close();
+
+                        addSuggestError.setText("Send !");
+                    } else {
+                        // Nothing = Display Error
+                        addSuggestError.setText("Error, all input are not fill...");
+                    }
+                }
+            });
+
+            suggestDataContainer.getChildren().addAll(suggestDataTitle, firstNameInput, lastNameInput, adressStationInput, nameStationInput, postalCodeInput, communeInput, nbBornetteInput, addSuggestError, sendInput);
 
             Scene suggestDataScene = new Scene(suggestDataContainer, 400, 400);
             suggestDataStage = new Stage();
