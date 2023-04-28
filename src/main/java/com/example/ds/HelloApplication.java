@@ -17,6 +17,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,8 +76,9 @@ public class HelloApplication extends Application {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            System.out.println(json.toString());
-            System.out.println(json.get("id"));
+
+            JSONArray family = json.getJSONArray("fields");
+            System.out.println(family);
 
             Scene downloadDataScene = new Scene(downloadDataContainer, 400, 400);
             downloadDataStage = new Stage();
