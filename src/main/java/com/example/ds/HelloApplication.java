@@ -68,21 +68,22 @@ public class HelloApplication extends Application {
             downloadDataContainer.setAlignment(Pos.CENTER);
             // Create Element
             Label downloadDataTitle = new Label("Download Data :");
-            downloadDataContainer.getChildren().addAll(downloadDataTitle);
+            Label data = new Label();
 
             JSONObject json = null;
             try {
-                json = readJsonFromUrl("https://download.data.grandlyon.com/ws/grandlyon/pvo_patrimoine_voirie.pvostationvelov/all.json?maxfeatures=-1");
+                json = readJsonFromUrl("https://download.data.grandlyon.com/ws/grandlyon/pvo_patrimoine_voirie.pvostationvelov/all.json?maxfeatures=100&start=1");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
 
-            JSONArray family = json.getJSONArray("fields");
-            System.out.println(family);
+            JSONArray dataAPI = json.getJSONArray("values");
+            downloadDataContainer.getChildren().addAll(downloadDataTitle, readAllData(dataAPI));
 
             Scene downloadDataScene = new Scene(downloadDataContainer, 400, 400);
             downloadDataStage = new Stage();
             downloadDataStage.setScene(downloadDataScene);
+            downloadDataStage.setTitle("Download");
             downloadDataStage.show();
         });
 
@@ -98,6 +99,7 @@ public class HelloApplication extends Application {
             Scene suggestDataScene = new Scene(suggestDataContainer, 400, 400);
             suggestDataStage = new Stage();
             suggestDataStage.setScene(suggestDataScene);
+            suggestDataStage.setTitle("Suggest");
             suggestDataStage.show();
         });
 
@@ -113,6 +115,7 @@ public class HelloApplication extends Application {
             Scene deleteDataScene = new Scene(deleteDataContainer, 400, 400);
             deleteDataStage = new Stage();
             deleteDataStage.setScene(deleteDataScene);
+            deleteDataStage.setTitle("Suggest");
             deleteDataStage.show();
         });
 
@@ -122,6 +125,7 @@ public class HelloApplication extends Application {
         // Set scene
         Scene mainScene = new Scene(container, 600, 600);
         primaryStage.setScene(mainScene);
+        primaryStage.setTitle("Main windows");
         primaryStage.show();
     }
 
@@ -144,6 +148,24 @@ public class HelloApplication extends Application {
         } finally {
             is.close();
         }
+    }
+
+    public static VBox readAllData(JSONArray dataAPI) {
+        VBox containerDataAPI = new VBox(10);
+        VBox containerStation = new VBox(20);
+
+        for (int i = 0 ; i < dataAPI.length()-1; i++) {
+            JSONObject obj = dataAPI.getJSONObject(i);
+            String adressData = obj.getString("adresse1");
+            //String B = String.valueOf(obj.getInt("numdansarrondissement"));
+            String nameData = obj.getString("nom");
+            // String D = obj.getString("nbbornettes");
+
+            Label newLabel = new Label("=> Adress : " + adressData + " / Nom : =>" + nameData);
+            containerStation.getChildren().add(newLabel);
+        }
+        containerDataAPI.getChildren().add(containerStation);
+        return containerDataAPI;
     }
 
     public static void main(String[] args) {
